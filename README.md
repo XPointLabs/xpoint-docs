@@ -4,34 +4,32 @@ cover: .gitbook/assets/xpoint-cover.png
 coverY: 0
 ---
 
-# XPoint Network Docs
+# Документация Deep и XPoint
 
-XPoint Network is the node, staking, and transport layer for the Deep messenger ecosystem. The network combines Session-style private message routing with XPNT staking on Arbitrum, BLS12-381 quorum signatures, node-local storage sidecars, and production-oriented Docker deployment.
+Это актуальная документация готовящегося к выпуску мессенджера Deep, его транспортов и инфраструктуры XPoint. Продукт ещё не запущен в production: опубликованные здесь адреса и инструкции описывают текущую реализацию и безопасный путь к релизу, а не объявляют общий доступ.
 
-The documentation in this repository is written for node operators, stakers, infrastructure engineers, and developers who need to understand how XPoint works and how to run it safely.
+## С чего начать
 
-## Start here
-
-| Goal | Page |
+| Задача | Раздел |
 | --- | --- |
-| Understand the network | [XPoint Network](xpoint-network/README.md) |
-| Review the production contracts | [XPNT and staking contracts](xpoint-token/contracts.md) |
-| Run a production node | [Production node setup](xpoint-nodes/setup-production-node.md) |
-| Register and stake a node | [Register a node](xpoint-nodes/register-node.md) |
-| Start local UAT | [Local UAT environment](developers/local-uat.md) |
-| See what remains centralized | [Centralization boundaries](xpoint-network/centralization-boundaries.md) |
+| Начать пользоваться Deep | [Руководство пользователя](users/README.md) |
+| Понять транспорты и страницу «Путь» | [Транспорты](network/transports.md) |
+| Разобраться с локальными данными и сбросом | [Конфиденциальность и локальные данные](users/privacy-and-local-data.md) |
+| Развернуть или обслуживать инфраструктуру | [Руководство администратора](administrators/README.md) |
+| Проверить, что действительно готово к релизу | [Статус готовности](release-readiness.md) |
+| Узнать параметры XPNT и стейкинга | [XPNT и стейкинг](token/README.md) |
 
-## Current production baseline
+## Текущая модель
 
-- Chain: Arbitrum One, chain ID `42161`.
-- Token: XPNT at `0x63B2cdb8B0d8774F1Fdca91D24803698582a079F`.
-- Staking requirement: `25,000 XPNT`.
-- Service-node quorum crypto: `BLS12-381`.
-- Node runtime: `xnode` with Session-compatible routing semantics and VLESS/Xray ingress.
-- Storage model: per-node storage sidecar for message storage state.
-- Push delivery: centralized provider bridge because mobile platforms depend on FCM, APNs, or Huawei gateways.
+Deep отделяет прикладной протокол от транспорта. XPoint — основной реализованный маршрутизируемый транспорт, но не единственно возможный вариант архитектуры. Direct P2P и пользовательская инфраструктура являются отдельными транспортными режимами; их доступность указана явно в [матрице готовности](release-readiness.md).
 
-## Repository model
+Сообщения и файлы шифруются на стороне клиента. Registry, файловый сервис, push, TURN и административные компоненты являются эксплуатируемой инфраструктурой и не получают права расшифровывать содержимое переписки. Узлы XPoint пересылают зашифрованные данные по проверенному маршруту.
 
-This portal follows the same lightweight GitBook-compatible shape as the official Session docs reference: `README.md`, `SUMMARY.md`, and a Markdown documentation tree. The text, branding, architecture, contract addresses, and operator flow are XPoint-specific.
+## Версии клиента на этой точке отсчёта
 
+- версия приложения: `0.2.9` (`versionCode 15`);
+- Android: не ниже API 28 (Android 9);
+- Windows: не ниже Windows 10 build 19041;
+- iOS и Mac Catalyst: минимальная версия 15.0, сборка и приёмка выполняются на macOS.
+
+Устанавливайте только сборки из официального релизного канала. Production Android package ID — `network.xpoint.deep`; физическая UAT-сборка имеет отдельный package ID и не является релизом.

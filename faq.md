@@ -2,29 +2,32 @@
 icon: circle-question
 ---
 
-# FAQ
+# Частые вопросы
 
-## Is XPoint the same as Session?
+## XPoint — единственный транспорт Deep?
 
-No. XPoint preserves important Session-style network behavior where it matters: private routing, signed relay contacts, service-node operation, and storage delivery semantics. XPoint has its own token, staking contracts, branding, deployment tooling, and client implementation.
+Нет. Клиент имеет транспортный контракт, отделённый от переписки. Сейчас релизный профиль использует маршрутизируемый XPoint-транспорт. Direct P2P предусмотрен как отдельный режим, но ещё не имеет проверенной реализации и поэтому безопасно отклоняется при запуске.
 
-## Why Arbitrum?
+## Почему приложение просит сбросить локальные данные?
 
-Production staking is deployed on Arbitrum One. Arbitrum supports the BLS12-381 precompiles needed by the current staking signature path.
+Deep не смог прочитать зашифрованную базу с текущим ключом защищённого хранилища либо обнаружил несовместимую или не соответствующую аккаунту защищённую идентичность. Приложение не подменяет ключ и не стирает данные автоматически. Сначала убедитесь, что у вас сохранена recovery phrase, затем подтвердите сброс. Подробнее: [Конфиденциальность и локальные данные](users/privacy-and-local-data.md).
 
-## Why does the node use Xray/VLESS?
+## Что делает защита снимков экрана?
 
-VLESS/Xray is the ingress transport used by XPoint nodes. It is not the application protocol. XPoint keeps Session-compatible routing semantics above the transport layer.
+Она скрывает содержимое Deep в системном списке приложений и блокирует системные снимки там, где это поддерживает ОС. Настройка включена по умолчанию и отключается в разделе «Конфиденциальность» — например, на время согласованной UAT-диагностики.
 
-## Can push notifications be decentralized?
+## Видят ли узлы сообщения и файлы?
 
-Not fully while Android and iOS depend on FCM, APNs, or Huawei push gateways. XPoint can minimize metadata and encrypt payloads, but delivery still crosses provider infrastructure.
+Они пересылают или хранят зашифрованные данные. Содержимое шифруется клиентом, а целостность проверяется прикладным протоколом. TLS защищает соединение до публичного сервиса, но не заменяет сквозное шифрование.
 
-## Should a node auto-register itself on-chain?
+## Нужен ли сертификатный pin для registry или файлового сервиса?
 
-No. A node publishes registration material and appears in the staking portal. The operator manually stakes and submits the on-chain registration with a wallet.
+Для публичных Certbot/CA-managed HTTPS endpoints — нет. Клиент использует системную проверку доверенной цепочки, имени хоста, срока действия и отзыва. Permissive-проверки и `return true` запрещены. Подписанные данные registry/Mr. X и проверка сообщений/файлов остаются обязательными на прикладном уровне.
 
-## Can I use a private Alchemy RPC?
+## Можно ли полностью децентрализовать push?
 
-Yes, but only backend-side. Put it in `DEEP_ARBITRUM_RPC_URL`, `Contracts__EthereumRpcUrl`, or the equivalent server-side secret. Do not put it in `NEXT_PUBLIC_*`.
+Мобильные ОС используют FCM/APNs и аналогичные шлюзы. Deep минимизирует метаданные и не передаёт через push открытый текст сообщения, однако сам канал доставки уведомления остаётся зависимым от платформы.
 
+## Узел сам регистрирует себя в блокчейне?
+
+Нет. Узел публикует подписанные регистрационные данные. Оператор проверяет их, подключает кошелёк и вручную подтверждает стейкинг-транзакцию.
