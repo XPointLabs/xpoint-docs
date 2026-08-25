@@ -11,7 +11,7 @@ icon: list-check
 | Возможность | Реализация | Физический UAT | Релизный вывод |
 | --- | --- | --- | --- |
 | Создание/восстановление identity | есть | использовано в текущей паре | продолжить negative/reset gates |
-| XPoint authenticated MAU2 | есть | реальный трёхузловой HTTPS path работает | основной кандидат |
+| XPoint privacy-routed MAU2 | есть: exact 3-hop, disjoint fallback, direct fallback удалён | новый путь ещё не прогнан Android↔Windows | блокер physical evidence |
 | Двусторонний текст | есть | пройден Android↔Windows | подтверждено в текущем run |
 | Статус «Отправлено» | есть | пройден exact UI marker | подтверждено в текущем run |
 | Выбор и отправка файла | есть | Android staging не завершён | блокер |
@@ -20,7 +20,7 @@ icon: list-check
 | Звонки WebRTC | client + registry code есть | end-to-end run не завершён | блокер: deployment/routing/TURN/UAT |
 | Push | есть | текущий physical cycle не закрыт | блокер evidence |
 | Restart/outbox durability | есть | фазы не завершены | блокер |
-| Manual/automatic retry + ACK crash | harness есть | chaos phases не завершены | блокер |
+| Before-forward fallback + outcome-unknown/ACK crash | opaque-ingress harness есть | chaos phases на новом path не завершены | блокер |
 | Direct P2P Wi‑Fi/Bluetooth | только scaffolding/contracts | нет verified peer adapter | недоступно, fail-closed |
 | User-managed MAU2 | mode contract есть | release profile отсутствует | не выпускать как готовое |
 

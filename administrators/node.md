@@ -20,6 +20,7 @@ Production node compose находится в `deep-devops/docker-compose.node.p
 ## Уникальные secrets узла
 
 - Ed25519 identity: `key_ed25519`;
+- независимый X25519 private key для privacy routing (не конвертируется из Ed25519);
 - BLS12-381 private key: `key_bls`;
 - VLESS client UUID;
 - Reality key pair и short ID;
@@ -36,14 +37,16 @@ cd /opt/xpoint/deep-devops
 cp .env.node.prod.example .env.node.prod
 mkdir -p secrets/ingress
 node ./scripts/new-xnode-identity.mjs --as-env --out-dir ./secrets
-chmod 600 ./secrets/key_ed25519 ./secrets/key_bls
+chmod 600 ./secrets/key_ed25519 ./secrets/key_x25519 ./secrets/key_bls
 ```
 
 Скопируйте только выведенные public/config values в `.env.node.prod`. Reality key pair создавайте штатным Xray той же pinned версии/образа, который будет запущен.
 
 ## Сетевой контур
 
-Compose публикует только `ingress:443`. Внутренние xnode API/peer API, Xray container port и storage не имеют host publisher. HAProxy разделяет точный HTTPS SNI и Reality SNI, удаляет входные `Forwarded` headers и пропускает только allowlisted routes. Quorum-signing endpoint ограничен coordinator `/32`.
+Compose публикует только `ingress:443`. Публичный message API содержит единственный `POST /api/ingress/v1/frame`; direct MAU2 и Session RPC отсутствуют. Внутренний `POST /api/peer/privacy/v1/frame`, остальные xnode API, Xray container port и storage не имеют host publisher. HAProxy разделяет точный HTTPS SNI и Reality SNI, удаляет входные `Forwarded` headers и пропускает только allowlisted routes. Quorum-signing endpoint ограничен coordinator `/32`.
+
+Каждый узел должен иметь подписанный privacy contact и authority остальных допустимых peers: RouterId, внутренний peer origin, независимый X25519 public key и exact capability `privacy-routing-v1`. Повторяющиеся identity/key, неизвестный peer, неверная подпись или неканонический endpoint останавливают маршрут fail-closed.
 
 ## Preflight и запуск
 

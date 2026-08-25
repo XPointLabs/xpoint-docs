@@ -10,7 +10,7 @@ icon: shield-halved
 | --- | --- |
 | Прикладная криптография | идентичность отправителя, шифрование и целостность сообщений/файлов |
 | Mailbox protocol | credentials владельца, replay/ack, authority/revocation/topology generations |
-| XPoint route | подписанные relay contacts, разные hops, допустимый transport profile |
+| XPoint route | подписанные privacy contacts, независимые RouterId/X25519, ровно три hops и непересекающийся fallback |
 | HTTPS | доверенная CA-цепочка, hostname, срок действия и отзыв сертификата |
 | Локальное хранение | SQLCipher и platform SecureStorage |
 
@@ -29,6 +29,7 @@ Registry, file, push, staking и call signaling с публичными CA/Certb
 - корневой ключ Mr. X для доверенного release/UAT-профиля;
 - последовательные authority, revocation и topology generations;
 - membership proofs и credentials;
+- хеш exact privacy-route artifact внутри подписанной activation policy;
 - app identity и code-transparency material для Android release;
 - целостность зашифрованных сообщений и вложений.
 

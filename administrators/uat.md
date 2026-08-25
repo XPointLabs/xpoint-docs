@@ -4,7 +4,7 @@ icon: flask
 
 # Локальный физический UAT
 
-Поддерживаемый путь клиентской приёмки — survival/physical lane из `deep-devops`. Он сохраняет production-свойства: HTTPS, проверенный частный CA, реальные XPoint nodes, authenticated MAU2, файловый сервис и signed mailbox artifacts. Cleartext application transport не является допустимым UAT-профилем.
+Поддерживаемый путь клиентской приёмки — survival/physical lane из `deep-devops`. Он сохраняет production-свойства: HTTPS, проверенный частный CA, шесть XPoint nodes, трёхслойный privacy-routed authenticated MAU2, непересекающийся fallback, файловый сервис и signed mailbox artifacts. Cleartext application transport и direct MAU2 endpoint не являются допустимым UAT-профилем. После clean break новый путь требует отдельного Android↔Windows evidence; результаты старого direct-path прогона его не подтверждают.
 
 ## Подготовка TLS и стека
 
