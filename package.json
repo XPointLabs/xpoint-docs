@@ -1,0 +1,19 @@
+{
+  "name": "xpoint-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deep and XPoint user and administrator documentation",
+  "scripts": {
+    "build": "honkit build . _book",
+    "check": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/Test-Rc6DocumentationContracts.ps1",
+    "verify-render": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/Test-Rc6DocumentationContracts.ps1 -RenderedOutput"
+  },
+  "engines": {
+    "node": "24.13.0",
+    "npm": "11.8.0"
+  },
+  "packageManager": "npm@11.8.0",
+  "devDependencies": {
+    "honkit": "6.2.2"
+  }
+}

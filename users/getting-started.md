@@ -31,7 +31,7 @@ icon: play
 | --- | --- | --- |
 | Android | Android 9 / API 28 | физический UAT выполняется |
 | Windows | Windows 10 build 19041 | физический UAT выполняется |
-| iOS/iPadOS | 15.0 | требуется отдельная macOS/device-приёмка |
-| Mac Catalyst | 15.0 | требуется отдельная macOS-приёмка |
+| iOS/iPadOS | target 15.0 | не проверено; release support не заявлен до macOS authority и device evidence |
+| Mac Catalyst | target 15.0 | не проверено; release support не заявлен до macOS authority |
 
-Телефон с Android ниже API 28 не поддерживается этой сборкой.
+Apple lane имеет статус `unverified` и `non-blocking` для текущего Android/Windows RC, но наличие target framework не считается поддержкой. Телефон с Android ниже API 28 не поддерживается этой сборкой.

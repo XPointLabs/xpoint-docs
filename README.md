@@ -30,6 +30,6 @@ Deep отделяет прикладной протокол от транспо�
 - версия приложения: `0.2.9` (`versionCode 15`);
 - Android: не ниже API 28 (Android 9);
 - Windows: не ниже Windows 10 build 19041;
-- iOS и Mac Catalyst: минимальная версия 15.0, сборка и приёмка выполняются на macOS.
+- iOS/iPadOS и Mac Catalyst имеют target minimum 15.0, но для этого RC имеют статус `unverified` и не объявляются release-supported до отдельной macOS build/signing authority и физической Apple-приёмки. Эта lane имеет статус `non-blocking` для Android/Windows RC.
 
 Устанавливайте только сборки из официального релизного канала. Production Android package ID — `network.xpoint.deep`; физическая UAT-сборка имеет отдельный package ID и не является релизом.

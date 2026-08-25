@@ -28,7 +28,7 @@ docker compose --env-file ./.env.node.prod -f ./docker-compose.node.prod.yml log
 
 ## Вызовы не соединяются
 
-Проверьте, что `/api/calls` направлен в registry, unsigned ICE request возвращает `401`, signed credential ещё действителен, TURN DNS/IP и listeners доступны с внешней сети, а relay range открыт. Затем отдельно запустите direct ICE и forced relay test; успех signaling не доказывает media path.
+Проверьте, что `/api/calls/` направлен в registry, registry call readiness имеет состояние `ready`, а unsigned signal/inbox/ICE запросы получают `401`. Затем проверьте наличие durable `Calls__StatePath`, доступность файлов `Calls__TurnSharedSecretFile` и `Calls__PushNotifyBearerTokenFile`, ICE URLs, firewall и advertised TURN address. Открыты должны быть `3478/tcp+udp`, `5349/tcp+udp` и relay range `49160–49200/tcp+udp`. После этого отдельно запустите direct ICE и forced relay test; успех signaling не доказывает media path, а Cloud proxy на HTTPS-порту не заменяет TURN listeners.
 
 ## Физический тест не видит Android
 

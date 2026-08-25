@@ -23,6 +23,7 @@ icon: list-check
 | Before-forward fallback + outcome-unknown/ACK crash | opaque-ingress harness есть | chaos phases на новом path не завершены | блокер |
 | Direct P2P Wi‑Fi/Bluetooth | только scaffolding/contracts | нет verified peer adapter | недоступно, fail-closed |
 | User-managed MAU2 | mode contract есть | release profile отсутствует | не выпускать как готовое |
+| iOS/iPadOS и Mac Catalyst | target frameworks есть | macOS signing/device evidence отсутствует | явно не проверено; не блокирует Android/Windows RC и не является release-supported |
 
 ## Инфраструктура
 
@@ -46,4 +47,7 @@ icon: list-check
 4. negative TLS/runtime проверки;
 5. production endpoint, DNS, certificate renewal и rollback evidence;
 6. отсутствие UAT trust/secrets и debug package identity в release binaries;
-7. чистые, локально закоммиченные source repositories и воспроизводимый release manifest.
+7. реальный snapshot→isolated restore с проверкой X25519/identity, registry call/replay и canary state после повторного restart;
+8. чистые, локально закоммиченные source repositories и воспроизводимый release manifest.
+
+iOS/iPadOS и Mac Catalyst входят в отдельную Apple lane. До появления назначенной macOS build/signing authority и физического device evidence они явно `unverified` и `non-blocking` для выпуска Android/Windows RC и не могут рекламироваться как проверенно поддерживаемые.

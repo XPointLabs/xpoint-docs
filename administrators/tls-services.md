@@ -36,6 +36,19 @@ curl --fail https://registry.example/health/live
 - TURN передаёт DTLS-SRTP media и не расшифровывает её;
 - отдельный параллельный signaling backend не развёртывается.
 
+Release profile registry задаёт `Calls__Required=true`, `Calls__Enabled=true`, отдельный `Calls__StatePath`, `Calls__TurnSharedSecretFile`, `Calls__CredentialLifetimeSeconds` в диапазоне 300–3600 и непустой массив `Calls__IceUrls`. Push wake-up использует `Calls__PushNotifyUrl` и, если endpoint закрыт bearer-аутентификацией, `Calls__PushNotifyBearerTokenFile`. Секрет нельзя передавать через `Calls__TurnSharedSecret` в environment или командной строке.
+
+Публичный сетевой контракт:
+
+| Назначение | Протокол/порт |
+| --- | --- |
+| Registry signaling, inbox и ICE credentials | HTTPS `443/tcp` |
+| STUN/TURN | `3478/udp` и `3478/tcp` |
+| TURN over TLS/DTLS | `5349/tcp` и `5349/udp` |
+| TURN relay range | `49160–49200/udp` и `49160–49200/tcp` |
+
+Маршруты registry: `POST /api/calls/signal`, authenticated `GET /api/calls/inbox/{recipient}` и authenticated `GET /api/calls/ice-servers/{recipient}`. Все три используют account Ed25519 signatures и bounded nonce replay protection; call inbox и replay state сохраняются durable до ответа. Публичный reverse proxy направляет весь `/api/calls/` в registry API. TURN listeners публикуются напрямую или через DNS-only hostname: обычный HTTP/CDN proxy не переносит эти порты.
+
 Проверяйте unsigned request (`401`), direct ICE и forced TURN с двух реальных сетей. Cloud proxy, не поддерживающий TURN ports, нельзя считать работающим TURN ingress.
 
 ## UAT private CA

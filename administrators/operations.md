@@ -30,19 +30,28 @@ docker compose --env-file ./.env.node.prod -f ./docker-compose.node.prod.yml log
 
 Сохраняйте зашифрованно и раздельно:
 
-- `.env.node.prod` без вынесенных private key bytes;
-- `key_ed25519`, `key_bls`, Reality material;
+- проверенную конфигурацию релиза без вынесенных private key bytes;
+- Ed25519 identity, отдельный X25519 privacy-routing key, BLS key, VLESS client identity и Reality private/public material;
 - ingress certificate profile metadata и protected secret versions;
 - Docker volumes `xnode-state`, `xnode-config`, `node-storage-state`;
+- подписанные membership/privacy-route artifacts и точные image/config digests;
 - reverse proxy/firewall/monitoring configuration;
 - последний подтверждённый image/release manifest.
 
-Проверяйте восстановление на изолированном host. Для staked node нельзя генерировать новую identity вместо утраченной: это другой узел и требует штатного exit/re-registration.
+Ed25519, X25519 и BLS — разные ключевые роли. Сохранность Ed25519 не компенсирует утрату X25519: опубликованный privacy-route contact больше не соответствует узлу. Проверяйте восстановление на изолированном host реальным snapshot→restore, сравнением хеша восстановленного дерева и повторным запуском canary-проверок. Для staked node нельзя генерировать новую identity вместо утраченной: это другой узел и требует штатного rotation либо exit/re-registration.
 
 ## Registry и staking services
 
-Registry snapshot, staking backend/indexer state и signing/turn secrets имеют отдельные backup и recovery procedures. On-chain state остаётся источником истины для membership/rewards, но не восстанавливает автоматически operational state, mailbox credentials или filesystem snapshots.
+Registry snapshot должен включать основной state и durable `calls-v2` signaling/replay state в том же защищённом volume. Staking backend/indexer state, TURN shared secret, push credentials и signing material имеют отдельные protected backup records. On-chain state остаётся источником истины для membership/rewards, но не восстанавливает автоматически operational state, mailbox credentials, pending encrypted call signals или filesystem snapshots.
+
+## Recovery и rollback drill
+
+Перед snapshot остановите все writers: архив работающей базы не считается согласованной копией. Восстанавливайте snapshot в новый изолированный volume, сравнивайте содержимое и metadata с источником, затем запускайте pinned recovery stack без production DNS, push и signing side effects.
+
+После запуска проверьте неизменность публичных fingerprints Ed25519/X25519/BLS, readiness, извлечение canary message/file по прежнему хешу, registry counters и durable call inbox. Pending encrypted call signal должен выдаваться ровно один раз, а повтор того же signed nonce — отклоняться. Повторите проверки после ещё одного restart.
+
+При rollback старые images разрешено подключать к новому state только при явно доказанной schema compatibility. Иначе восстанавливайте pre-upgrade snapshot вместе с предыдущим manifest и protected-material versions. Empty volume, regenerated identity и legacy reader не являются восстановлением.
 
 ## Логи и evidence
 
-Не записывайте recovery phrases, private keys, full credentials, plaintext attachments, full Deep IDs или push tokens. Release evidence должен содержать hashes, версии, timestamps, outcomes и ограниченные counters, а не секретный payload.
+Не записывайте recovery phrases, private keys, full credentials, plaintext attachments, full Deep IDs или push tokens. Release evidence должен содержать только schema/tool versions, hashes, timestamps, outcomes и ограниченные counters. Имена volume/container/project, host paths, hostnames, stdout/stderr, raw logs и backup archives в evidence не входят.

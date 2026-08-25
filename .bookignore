@@ -1,0 +1,9 @@
+AGENTS.md
+.bookignore
+package.json
+package-lock.json
+.nvmrc
+.gitignore
+.gitbook.yaml
+node_modules/
+_book/
