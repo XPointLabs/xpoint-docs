@@ -23,7 +23,7 @@ icon: list-check
 | Push | есть | текущий physical cycle не закрыт | блокер evidence |
 | Restart/outbox durability | есть | фазы не завершены | блокер |
 | Before-forward fallback + outcome-unknown/ACK crash | opaque-ingress harness есть | chaos phases на новом path не завершены | блокер |
-| Direct P2P | policy/interface и nearby scaffolding | verified peer adapter отсутствует | перенесён в следующий post-production спринт; не блокирует первый релиз |
+| Direct P2P mesh | policy/interface и nearby scaffolding | verified peer/mesh adapter отсутствует | будущее архитектурное требование; не блокирует первый релиз |
 | User-managed/on-prem MAU2 | dormant SHR1/mode contract | runtime profile отсутствует | позднее; сохранять architecture seam |
 | iOS/iPadOS и Mac Catalyst | target frameworks есть | macOS signing/device evidence отсутствует | явно не проверено; не блокирует Android/Windows RC и не является release-supported |
 
@@ -53,8 +53,8 @@ icon: list-check
 8. snapshot→restore сохраняет XNode identity и пользовательский контур, а production rollback отрепетирован;
 9. source repositories чисты и release manifest воспроизводим.
 
-Direct P2P не входит в scope первого production-релиза. До следующего спринта
-режим остаётся скрытым/fail-closed и не может использовать official mailbox
-как неявный fallback.
+Direct P2P mesh не входит в scope первого production-релиза. До отдельной
+будущей реализации режим остаётся скрытым/fail-closed и не может использовать
+official mailbox как неявный fallback.
 
 iOS/iPadOS и Mac Catalyst входят в отдельную Apple lane. До появления назначенной macOS build/signing authority и физического device evidence они явно `unverified` и `non-blocking` для выпуска Android/Windows RC и не могут рекламироваться как проверенно поддерживаемые.

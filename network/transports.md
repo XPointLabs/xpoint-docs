@@ -11,7 +11,7 @@ icon: route
 | XPoint three-hop MAU2 | `official-managed` | onion/privacy path реализован; physical UAT не закрыт |
 | XPoint masked carrier | `official-managed` | server/client Xray части есть, message path между ними не подключён |
 | authenticated MAU2 | `user-managed` | dormant architecture contract; runtime/on-prem позже |
-| Direct P2P | `direct-p2p` | следующий post-production спринт; verified peer implementation отсутствует |
+| Direct P2P mesh | `direct-p2p` | будущее архитектурное требование; verified peer/mesh implementation отсутствует |
 
 Нельзя смешивать protocol и ownership. Direct P2P допустим только с `direct-p2p`; authenticated MAU2 — только с `official-managed` или `user-managed`. Неизвестные и несовместимые пары отклоняются при запуске.
 
@@ -33,11 +33,23 @@ icon: route
 
 ## Direct P2P
 
-Целевой режим предназначен для прямого обмена между проверенными peers, включая локальные технологии Wi‑Fi и Bluetooth без Internet и Internet P2P там, где возможен direct NAT traversal. В коде есть platform discovery/radio scaffolding, но нет завершённого transport adapter, который удовлетворяет контрактам аутентификации, приватности метаданных, outbox и подтверждений.
+Целевой режим предназначен для обмена между проверенными peers без
+обязательного центрального mailbox. `Direct` означает эту независимость, а не
+обязательный one-hop: поддерживаются и прямой link, и multi-hop mesh через
+другие устройства. Link adapters могут использовать локальные Wi‑Fi/Bluetooth
+технологии без Internet и Internet P2P там, где возможен direct NAT traversal.
+
+Mesh требует authenticated neighbor discovery, маршрутизацию с TTL/hop limit,
+защиту от циклов, duplicate/replay и flooding, store-and-forward при временном
+разрыве, восстановление после partition и явное согласие/лимиты relay-узла.
+Промежуточное устройство не должно видеть plaintext или conversation keys и
+не может подменять origin/destination. В коде сейчас есть только platform
+discovery/radio scaffolding; завершённого peer/mesh transport adapter нет.
 
 Поэтому Direct P2P нельзя включать подменой URL или обычным HTTP-сервисом. Он
-остаётся недоступным в первом XPoint-only production-релизе и запланирован на
-следующий post-production спринт; отсутствие P2P не блокирует первый релиз.
+остаётся недоступным в первом XPoint-only production-релизе и реализуется
+позднее как архитектурно отдельная mesh-сеть; отсутствие P2P не блокирует
+первый релиз.
 TURN relay и process-local signaling не должны называться Direct P2P.
 
 ## Страница «Транспорты»

@@ -45,6 +45,11 @@ Registry, file, push, staking и call signaling с публичными CA/Certb
 Эксплуатируемыми компонентами остаются public registry, file service, push bridge, staking API/portal, TURN, DNS, container registry, мониторинг и incident response. Узлы XPoint и on-chain staking распределены, однако эта распределённость не превращает operated services в несуществующие. Документация и UI должны называть их прямо.
 
 Direct P2P не должен неявно обращаться к этим official services. Будущий
-user-managed/on-prem профиль может использовать собственные Registry,
+peer mesh должен сохранять end-to-end origin/destination authentication через
+каждый multi-hop route: relay не получает plaintext/keys и не может подменять
+сторону сообщения. Для mesh обязательны TTL/loop/replay/flood protection,
+relay consent, resource quotas и partition recovery.
+
+Будущий user-managed/on-prem профиль может использовать собственные Registry,
 signaling, TURN и file services, но только после явного consent-bound выбора
 другой authority и с обязательной TLS/SPKI проверкой.
