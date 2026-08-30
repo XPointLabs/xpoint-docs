@@ -7,8 +7,9 @@ icon: circle-question
 ## XPoint — единственный транспорт Deep?
 
 Нет. Клиент имеет транспортный контракт, отделённый от переписки. Сейчас
-реализована трёхузловая XPoint privacy-маршрутизация, но её Reality
-anti-blocking carrier ещё не подключён к message path. Direct P2P предусмотрен
+реализована трёхузловая XPoint privacy-маршрутизация, но её multi-carrier
+anti-blocking path ещё не подключён к message path. Reality является первым,
+а не единственным carrier. Direct P2P предусмотрен
 как отдельная будущая mesh-сеть: она должна поддерживать прямые и multi-hop
 peer-маршруты без обязательного official mailbox. Пока verified peer/mesh
 implementation отсутствует, режим безопасно отклоняется при запуске и не

@@ -42,13 +42,24 @@ Ed25519, X25519 и BLS — разные ключевые роли. Сохран�
 
 ## Registry и staking services
 
-Registry snapshot должен включать основной state и durable `calls-v2` signaling/replay state в том же защищённом volume. Staking backend/indexer state, TURN shared secret, push credentials и signing material имеют отдельные protected backup records. On-chain state остаётся источником истины для membership/rewards, но не восстанавливает автоматически operational state, mailbox credentials, pending encrypted call signals или filesystem snapshots.
+До clean-break cutover Registry snapshot включает legacy durable `calls-v2`
+signaling/replay state. После cutover этот state удаляется из release profile:
+call signaling хранится как обычный E2EE message/outbox, а Registry сохраняет
+только signed network/media policy и allocation state. Staking backend/indexer,
+relay credentials, push и signing material имеют отдельные protected backup
+records. On-chain state не восстанавливает operational state или credentials.
 
 ## Recovery и rollback drill
 
 Перед snapshot остановите все writers: архив работающей базы не считается согласованной копией. Восстанавливайте snapshot в новый изолированный volume, сравнивайте содержимое и metadata с источником, затем запускайте pinned recovery stack без production DNS, push и signing side effects.
 
-После запуска проверьте неизменность публичных fingerprints Ed25519/X25519/BLS, readiness, извлечение canary message/file по прежнему хешу, registry counters и durable call inbox. Pending encrypted call signal должен выдаваться ровно один раз, а повтор того же signed nonce — отклоняться. Повторите проверки после ещё одного restart.
+После запуска проверьте неизменность публичных fingerprints Ed25519/X25519/BLS,
+readiness, извлечение canary message/file, registry counters и current signed
+media policy. В новом profile pending call event восстанавливается общим
+message outbox/inbox и materialize/dedup contract; отдельный durable Registry
+call inbox отсутствует. Legacy RC-6 evidence дополнительно проверяет, что
+повтор того же `signed nonce` отклоняется; это regression старого `calls-v2`,
+а не контракт целевого call path. Повторите проверки после ещё одного restart.
 
 При rollback старые images разрешено подключать к новому state только при явно доказанной schema compatibility. Иначе восстанавливайте pre-upgrade snapshot вместе с предыдущим manifest и protected-material versions. Empty volume, regenerated identity и legacy reader не являются восстановлением.
 

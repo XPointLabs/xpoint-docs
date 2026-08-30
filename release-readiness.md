@@ -10,8 +10,10 @@ icon: list-check
 
 | Возможность | Реализация | Физический UAT | Релизный вывод |
 | --- | --- | --- | --- |
-| Создание/восстановление identity | локальное, без сетевого вызова | airplane-mode create-account evidence не сохранён | блокер physical evidence |
-| XPoint three-hop privacy route | есть: exact 3-hop, disjoint fallback, direct MAU2 удалён | текущий path не прогнан полностью | блокер physical evidence |
+| Создание/восстановление identity | текущий 13-word path является legacy evidence; целевой 24-word/device-scoped generation специфицирован | нет evidence нового generation | clean-break blocker |
+| Ratcheted E2EE | текущий DPE1 не имеет PFS/PCS | нет | clean-break blocker |
+| Initial contact bootstrap | текущий PRA требует существующего E2EE channel | нет | architecture/implementation blocker |
+| XPoint three-hop privacy route | exact 3-hop реализован; initial topology не обещает disjoint fallback | текущий path не прогнан полностью | блокер physical evidence |
 | XPoint anti-blocking carrier | серверный Xray/Reality есть, но MAUI mailbox идёт direct HTTPS | нет | фундаментальный blocker до v1 |
 | Двусторонний текст | код/автотесты есть | актуальный phone run не прошёл; новый APK не установлен | не подтверждено |
 | Статус «Отправлено» | код/автотесты есть | прежний marker не доказывает текущую доставку | не подтверждено |
@@ -34,9 +36,9 @@ icon: list-check
 | Physical UAT TLS | частный CA, HTTPS ingress и app-scoped Android trust реализованы |
 | Публичный registry/file TLS | системная CA/hostname validation; статический leaf pin не требуется |
 | Production node ingress | hardened Compose и current/next preflight contract реализованы; нужен deployment evidence |
-| Registry calls API | authenticated signaling и ICE credential code реализованы |
-| Production calls routing | `/api/calls` должен быть направлен в registry; standalone Node calls service запрещён |
-| TURN | deployment и direct/forced relay evidence обязательны до release |
+| Legacy Registry calls API | authenticated signaling/ICE code существует, но не входит в новый clean-break steady-state path |
+| Target call signaling | typed ratcheted events через XPoint message plane | не реализовано; blocker |
+| Target media relay | relay-only ICE, rotating masked UDP/TCP catalog | не реализовано; blocker |
 | On-chain staking | контракты развёрнуты; production onboarding/GA не открыт |
 
 ## Критерий выпуска
@@ -46,7 +48,7 @@ icon: list-check
 1. MAU2 message frame проходит через реальный client Xray/VLESS Reality carrier при заблокированном direct HTTPS ingress;
 2. arbitrary contact, двусторонний text и group roundtrip проходят на текущей signed commit matrix;
 3. offline account creation, restart durability и retry/ACK crash phases подтверждены физически;
-4. production bootstrap/rotation переживает долгий offline без потери identity/history/outbox;
+4. production bootstrap/rotation переживает долгий offline без потери identity/history/outbox; retention истёкших сообщений проверяется отдельно и не обещается бессрочно;
 5. заявленные для v1 media/call функции имеют отдельное physical evidence;
 6. отсутствуют UAT trust/secrets и debug package identity в release binaries;
 7. production DNS и public TLS issuance/renewal/expiry alerting подтверждены;

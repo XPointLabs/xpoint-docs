@@ -13,7 +13,7 @@ icon: user-gear
 | MAUI client | `deep-client-maui` | UI, platform integration, release composition |
 | Client domain | `deep-client-shared` | сообщения, outbox, файлы, звонки, persistence |
 | Protocol | `deep-protocol` | wire formats и криптографические контракты |
-| Registry | `deep-registry-api` | nodes, signed membership/mailbox data, call signaling/ICE |
+| Registry | `deep-registry-api` | nodes, signed membership/mailbox/network/media policy; legacy call signaling/ICE удаляется при clean-break cutover |
 | XPoint node | `xnode` | route ingress, relay, storage dispatch, heartbeat, quorum signing |
 | Staking | `xpoint-staking-*` | контракты, indexer/backend, portal |
 | Deployment | `deep-devops` | Compose, TLS, gates, evidence, recovery |

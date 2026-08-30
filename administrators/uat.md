@@ -4,12 +4,18 @@ icon: flask
 
 # Локальный физический UAT
 
-Поддерживаемый путь клиентской приёмки — survival/physical lane из `deep-devops`. Он сохраняет production-свойства: HTTPS, проверенный частный CA, шесть XPoint nodes, трёхслойный privacy-routed authenticated MAU2, непересекающийся fallback, файловый сервис и signed mailbox artifacts. Cleartext application transport и direct MAU2 endpoint не являются допустимым UAT-профилем. После clean break новый путь требует отдельного Android↔Windows evidence; результаты старого direct-path прогона его не подтверждают.
+Поддерживаемый путь клиентской приёмки — survival/physical lane из `deep-devops`. Он сохраняет production-свойства: HTTPS, проверенный частный CA, трёхслойный privacy-routed authenticated MAU2, файловый сервис и signed mailbox artifacts. Шесть lab XNode позволяют дополнительно тестировать непересекающийся fallback, но первый трёхузловой production profile такого свойства не заявляет. Cleartext application transport и direct MAU2 endpoint не являются допустимым UAT-профилем. После clean break новый путь требует отдельного Android↔Windows evidence; результаты старого direct-path прогона его не подтверждают.
 
 Этот lane пока доказывает direct HTTPS managed ingress, а не клиентский
 VLESS/Reality carrier. Для anti-blocking release gate нужен отдельный real-Xray
 профиль: direct HTTPS ingress блокируется, а тот же MAU2 roundtrip проходит
 через Reality.
+
+HAProxy не обязателен для быстрого внутреннего developer lane: контейнерные
+тесты могут обращаться к private Xray/ingress listeners напрямую. Но такой
+lane не является production evidence. Общий public 443, SNI separation,
+сертификаты, header suppression и Docker DNS re-resolution обязательно
+проверяются отдельным production-representative UAT профилем.
 
 ## Подготовка TLS и стека
 
@@ -51,9 +57,10 @@ USB допустим как канал управления ADB, но он не 
 Рекомендуемый порядок runner из `deep-client-maui/eng`:
 
 1. `ProvisionIdentity` и `Attach`;
-2. `GroupText`: arbitrary contact, группа, text в обе стороны, exactly-once и cold restart;
+2. `GroupText`: arbitrary contact, группа, text в обе стороны, at-least-once retry без дубликата пользовательского эффекта и cold restart;
 3. `PayloadMatrix`: двусторонний текст, статусы, файл, изображение, голос;
-4. `Call`: direct ICE и forced TURN;
+4. `Call`: E2EE message-plane signaling, relay-only ICE и UDP-blocked masked
+   TCP fallback; direct ICE не входит в official v1;
 5. `RestartDurability`;
 6. `ManualResendAfterRestart`;
 7. `AutomaticRetryAfterRestart`;

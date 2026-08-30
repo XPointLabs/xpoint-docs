@@ -28,7 +28,15 @@ docker compose --env-file ./.env.node.prod -f ./docker-compose.node.prod.yml log
 
 ## Вызовы не соединяются
 
-Проверьте, что `/api/calls/` направлен в registry, registry call readiness имеет состояние `ready`, а unsigned signal/inbox/ICE запросы получают `401`. Затем проверьте наличие durable `Calls__StatePath`, доступность файлов `Calls__TurnSharedSecretFile` и `Calls__PushNotifyBearerTokenFile`, ICE URLs, firewall и advertised TURN address. Открыты должны быть `3478/tcp+udp`, `5349/tcp+udp` и relay range `49160–49200/tcp+udp`. После этого отдельно запустите direct ICE и forced relay test; успех signaling не доказывает media path, а Cloud proxy на HTTPS-порту не заменяет TURN listeners.
+Для нового release profile сначала проверьте доставку typed call events через
+обычный XPoint message path, актуальность signed media-relay catalog, relay-only
+ICE и выбранный masked UDP/TCP carrier. Packet capture не должен показывать
+public STUN, direct peer candidate, Registry call inbox или direct TURN origin.
+
+Если проверяется только legacy UAT, `/api/calls/` должен быть направлен в
+registry, readiness — `ready`, unsigned запросы — `401`, а coturn secret/ports
+и relay range — доступны. Успех этого legacy path не является release evidence
+нового поколения.
 
 ## Физический тест не видит Android
 

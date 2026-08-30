@@ -11,9 +11,15 @@ Deep не связывает модель переписки с одним се�
 - подписанные authority, revocation и topology artifacts;
 - выданные конкретному владельцу mailbox credentials;
 - бинарную послойную маршрутизацию через ровно три различных узла;
-- отдельный полностью непересекающийся резервный маршрут только для отказа до пересылки;
+- best-effort резервный маршрут только для доказанного отказа до пересылки;
 - persistent outbox с идемпотентными попытками;
-- отдельные HTTPS-сервисы файлов, push и call signaling.
+- отдельные сервисы файлов, push и media relay, подчинённые общей
+  anti-censorship policy; call signaling передаётся как E2EE control message.
+
+Первые три production XNode дают один маршрут из трёх разных узлов. Резервный
+маршрут может переиспользовать эти узлы и не считается независимым failure
+domain. Полностью непересекающийся primary/fallback будет заявлен только после
+появления не менее шести узлов с подтверждённым operator/host/ASN diversity.
 
 Это ещё не готовый anti-blocking release path. Клиент сейчас отправляет
 зашифрованный privacy frame напрямую на HTTPS ingress; серверный Xray/Reality

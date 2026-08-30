@@ -8,6 +8,13 @@ coverY: 0
 
 Это актуальная документация готовящегося к выпуску мессенджера Deep, его транспортов и инфраструктуры XPoint. Продукт ещё не запущен в production: опубликованные здесь адреса и инструкции описывают текущую реализацию и безопасный путь к релизу, а не объявляют общий доступ.
 
+Этот репозиторий владеет только публичным user/operator поведением. Canonical
+wire formats, cryptography, security claims, retention numbers, topology и
+release gates находятся в [технической документации master-репозитория](https://github.com/XPointLabs/deep-platform/blob/main/docs/architecture/README.md).
+Здесь они не
+копируются: публичная страница описывает наблюдаемое поведение и ссылается на
+один source of truth.
+
 ## С чего начать
 
 | Задача | Раздел |
@@ -21,9 +28,11 @@ coverY: 0
 
 ## Текущая модель
 
-Deep отделяет прикладной протокол от транспорта. XPoint three-hop privacy route
-реализован, но его masked Reality carrier ещё не подключён к клиентскому
-message path. Первый production-релиз ограничен XPoint transport. Direct P2P
+Deep отделяет прикладной протокол от транспорта. Текущий код XPoint three-hop
+privacy route реализован, но его masked carrier ещё не подключён к клиентскому
+message path, а текущий Session-derived E2EE/identity заменяется новым
+clean-break generation с device-scoped ratchet. Первый production-релиз
+ограничен XPoint transport. Direct P2P
 mesh и user-managed/on-prem инфраструктура остаются более поздними
 архитектурными целями. Текущая доступность указана в [матрице
 готовности](release-readiness.md).

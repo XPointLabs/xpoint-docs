@@ -6,7 +6,7 @@ icon: certificate
 
 ## Публичные CA-managed сервисы
 
-Registry, file, push, staking API/portal и call signaling должны обслуживаться по HTTPS с сертификатом публично доверенной CA, точным SAN/hostname, актуальным сроком и рабочим renewal. Клиенты используют системный TLS validator.
+Registry, file, push и staking API/portal должны обслуживаться по HTTPS с сертификатом публично доверенной CA, точным SAN/hostname, актуальным сроком и рабочим renewal. Клиенты используют системный TLS validator. В целевом clean-break release call signaling не является отдельным Registry HTTPS API.
 
 Для Certbot-managed endpoints статические `DEEP_TLS_PUBLIC_KEY_PINS` и `DEEP_FILE_TLS_PUBLIC_KEY_PINS` не являются поддерживаемой моделью: смена ключа при штатном renewal не должна отключать все клиенты. Удаление pinning не разрешает permissive validation.
 
@@ -26,9 +26,22 @@ curl --fail https://registry.example/health/live
 
 Доступны `deep-managed` и `operator-managed` profiles. В обоих случаях private keys и pin inputs лежат в protected files, current и next keys различаются, а смена поколения выполняется без перезаписи уже опубликованного signed generation.
 
-## Call signaling и TURN
+## Calls: текущий UAT и целевой release
 
-Поддерживаемая production-схема:
+Текущий pre-clean-break UAT содержит `/api/calls/*` в `deep-registry-api` и
+обычный coturn. Он полезен только как reference/evidence и не является
+production-схемой нового поколения.
+
+Целевой public v1:
+
+- signaling events идут как ratcheted E2EE messages через XPoint;
+- `RelayOnly` использует только relay candidates;
+- relay allocation и descriptors получаются через three-hop XPoint;
+- signed rotating media catalog содержит masked UDP/443 и TCP/443 paths;
+- public/direct ICE, static direct TURN origin и отдельный Registry signaling
+  inbox отсутствуют.
+
+До реализации target legacy UAT допускает следующие проверки:
 
 - `/api/calls/*` маршрутизируется в `deep-registry-api`;
 - signaling envelopes короткоживущие, сквозно зашифрованные и аутентифицированные account Ed25519 key;
@@ -36,9 +49,17 @@ curl --fail https://registry.example/health/live
 - TURN передаёт DTLS-SRTP media и не расшифровывает её;
 - отдельный параллельный signaling backend не развёртывается.
 
-Release profile registry задаёт `Calls__Required=true`, `Calls__Enabled=true`, отдельный `Calls__StatePath`, `Calls__TurnSharedSecretFile`, `Calls__CredentialLifetimeSeconds` в диапазоне 300–3600 и непустой массив `Calls__IceUrls`. Push wake-up использует `Calls__PushNotifyUrl` и, если endpoint закрыт bearer-аутентификацией, `Calls__PushNotifyBearerTokenFile`. Секрет нельзя передавать через `Calls__TurnSharedSecret` в environment или командной строке.
+Эти `Calls__*` параметры относятся только к legacy UAT и должны быть удалены
+из release composition при cutover. Секрет нельзя передавать через
+`Calls__TurnSharedSecret` в environment или командной строке.
 
-Публичный сетевой контракт:
+Полный anti-checklist удаляемой legacy-конфигурации: `Calls__Required=true`,
+`Calls__Enabled=true`, `Calls__StatePath`, `Calls__TurnSharedSecretFile`,
+`Calls__CredentialLifetimeSeconds`, `Calls__IceUrls`, `Calls__PushNotifyUrl` и
+`Calls__PushNotifyBearerTokenFile`. Наличие любого из этих параметров после
+clean-break означает ошибку release composition, а не включение fallback.
+
+Legacy UAT network contract:
 
 | Назначение | Протокол/порт |
 | --- | --- |
@@ -49,7 +70,9 @@ Release profile registry задаёт `Calls__Required=true`, `Calls__Enabled=tr
 
 Маршруты registry: `POST /api/calls/signal`, authenticated `GET /api/calls/inbox/{recipient}` и authenticated `GET /api/calls/ice-servers/{recipient}`. Все три используют account Ed25519 signatures и bounded nonce replay protection; call inbox и replay state сохраняются durable до ответа. Публичный reverse proxy направляет весь `/api/calls/` в registry API. TURN listeners публикуются напрямую или через DNS-only hostname: обычный HTTP/CDN proxy не переносит эти порты.
 
-Проверяйте unsigned request (`401`), direct ICE и forced TURN с двух реальных сетей. Cloud proxy, не поддерживающий TURN ports, нельзя считать работающим TURN ingress.
+Проверяйте unsigned request (`401`) и forced TURN с двух реальных сетей только
+как legacy regression. Public release evidence вместо этого блокирует direct
+ICE/public TURN и доказывает relay-only masked UDP плюс UDP-blocked masked TCP.
 
 ## UAT private CA
 
