@@ -19,8 +19,8 @@ Deep не связывает модель переписки с одним се�
 зашифрованный privacy frame напрямую на HTTPS ingress; серверный Xray/Reality
 и клиентский Reality runtime существуют, но не связаны с mailbox transport.
 До v1 этот frame должен идти через маскированный carrier без direct-HTTPS
-bypass. Direct P2P также обязателен до v1, но production adapter пока
-отсутствует.
+bypass. Direct P2P не входит в первый production-релиз: он перенесён в
+следующий post-production спринт, а production adapter пока отсутствует.
 
 Registry публикует и обслуживает подписанные protocol data, но не является криптографическим владельцем пользовательской идентичности. On-chain state остаётся источником истины для стейкинга, а содержимое переписки защищает клиентский протокол.
 
