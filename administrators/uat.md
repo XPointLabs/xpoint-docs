@@ -6,6 +6,11 @@ icon: flask
 
 Поддерживаемый путь клиентской приёмки — survival/physical lane из `deep-devops`. Он сохраняет production-свойства: HTTPS, проверенный частный CA, шесть XPoint nodes, трёхслойный privacy-routed authenticated MAU2, непересекающийся fallback, файловый сервис и signed mailbox artifacts. Cleartext application transport и direct MAU2 endpoint не являются допустимым UAT-профилем. После clean break новый путь требует отдельного Android↔Windows evidence; результаты старого direct-path прогона его не подтверждают.
 
+Этот lane пока доказывает direct HTTPS managed ingress, а не клиентский
+VLESS/Reality carrier. Для anti-blocking release gate нужен отдельный real-Xray
+профиль: direct HTTPS ingress блокируется, а тот же MAU2 roundtrip проходит
+через Reality.
+
 ## Подготовка TLS и стека
 
 Из корня `deep-devops`:
@@ -46,13 +51,14 @@ USB допустим как канал управления ADB, но он не 
 Рекомендуемый порядок runner из `deep-client-maui/eng`:
 
 1. `ProvisionIdentity` и `Attach`;
-2. `PayloadMatrix`: двусторонний текст, статусы, файл, изображение, голос;
-3. `Call`: direct ICE и forced TURN;
-4. `RestartDurability`;
-5. `ManualResendAfterRestart`;
-6. `AutomaticRetryAfterRestart`;
-7. `AckCrashWindow`;
-8. `NegativeRuntime`.
+2. `GroupText`: arbitrary contact, группа, text в обе стороны, exactly-once и cold restart;
+3. `PayloadMatrix`: двусторонний текст, статусы, файл, изображение, голос;
+4. `Call`: direct ICE и forced TURN;
+5. `RestartDurability`;
+6. `ManualResendAfterRestart`;
+7. `AutomaticRetryAfterRestart`;
+8. `AckCrashWindow`;
+9. `NegativeRuntime`.
 
 Нельзя отмечать фазу пройденной по unit tests или визуальному наблюдению без сохранённого machine-readable evidence.
 

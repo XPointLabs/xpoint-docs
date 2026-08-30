@@ -4,16 +4,18 @@ icon: list-check
 
 # Статус готовности к релизу
 
-Актуально на 25 августа 2026 года. Это точка отсчёта, а не GA-объявление. «Реализовано» означает наличие production-path кода и автоматических контрактов; «проверено физически» требует успешный Android↔Windows run с сохранённым evidence.
+Актуально на 30 августа 2026 года. Это точка отсчёта, а не GA-объявление. «Реализовано» означает наличие production-path кода и автоматических контрактов; «проверено физически» требует успешный run текущей commit matrix с сохранённым evidence.
 
 ## Клиент и транспорт
 
 | Возможность | Реализация | Физический UAT | Релизный вывод |
 | --- | --- | --- | --- |
-| Создание/восстановление identity | есть | использовано в текущей паре | продолжить negative/reset gates |
-| XPoint privacy-routed MAU2 | есть: exact 3-hop, disjoint fallback, direct fallback удалён | новый путь ещё не прогнан Android↔Windows | блокер physical evidence |
-| Двусторонний текст | есть | пройден Android↔Windows | подтверждено в текущем run |
-| Статус «Отправлено» | есть | пройден exact UI marker | подтверждено в текущем run |
+| Создание/восстановление identity | локальное, без сетевого вызова | airplane-mode create-account evidence не сохранён | блокер physical evidence |
+| XPoint three-hop privacy route | есть: exact 3-hop, disjoint fallback, direct MAU2 удалён | текущий path не прогнан полностью | блокер physical evidence |
+| XPoint anti-blocking carrier | серверный Xray/Reality есть, но MAUI mailbox идёт direct HTTPS | нет | фундаментальный blocker до v1 |
+| Двусторонний текст | код/автотесты есть | актуальный phone run не прошёл; новый APK не установлен | не подтверждено |
+| Статус «Отправлено» | код/автотесты есть | прежний marker не доказывает текущую доставку | не подтверждено |
+| Произвольные контакты и группы | code path и GroupText harness есть | актуальный roundtrip/cold restart не пройден | блокер |
 | Выбор и отправка файла | есть | Android staging не завершён | блокер |
 | Изображения/превью | есть | ожидает продолжения payload matrix | блокер |
 | Голосовая запись/воспроизведение | есть | ожидает физического run | блокер |
@@ -21,8 +23,8 @@ icon: list-check
 | Push | есть | текущий physical cycle не закрыт | блокер evidence |
 | Restart/outbox durability | есть | фазы не завершены | блокер |
 | Before-forward fallback + outcome-unknown/ACK crash | opaque-ingress harness есть | chaos phases на новом path не завершены | блокер |
-| Direct P2P Wi‑Fi/Bluetooth | только scaffolding/contracts | нет verified peer adapter | недоступно, fail-closed |
-| User-managed MAU2 | mode contract есть | release profile отсутствует | не выпускать как готовое |
+| Direct P2P | policy/interface и nearby scaffolding | verified peer adapter отсутствует | фундаментальный blocker до v1 |
+| User-managed/on-prem MAU2 | dormant SHR1/mode contract | runtime profile отсутствует | позднее; сохранять architecture seam |
 | iOS/iPadOS и Mac Catalyst | target frameworks есть | macOS signing/device evidence отсутствует | явно не проверено; не блокирует Android/Windows RC и не является release-supported |
 
 ## Инфраструктура
@@ -41,13 +43,15 @@ icon: list-check
 
 Релиз нельзя подписывать только по успешной сборке. Обязательны:
 
-1. полный payload matrix на двух физических устройствах;
-2. direct ICE и forced TURN call;
-3. restart durability и все retry/ACK crash phases;
-4. negative TLS/runtime проверки;
-5. production endpoint, DNS, certificate renewal и rollback evidence;
-6. отсутствие UAT trust/secrets и debug package identity в release binaries;
-7. реальный snapshot→isolated restore с проверкой X25519/identity, registry call/replay и canary state после повторного restart;
-8. чистые, локально закоммиченные source repositories и воспроизводимый release manifest.
+1. MAU2 message frame проходит через реальный client Xray/VLESS Reality carrier при заблокированном direct HTTPS ingress;
+2. arbitrary contact, двусторонний text и group roundtrip проходят на текущей signed commit matrix;
+3. Direct P2P проходит на двух поддерживаемых устройствах без official mailbox;
+4. offline account creation, restart durability и retry/ACK crash phases подтверждены физически;
+5. production bootstrap/rotation переживает долгий offline без потери identity/history/outbox;
+6. заявленные для v1 media/call функции имеют отдельное physical evidence;
+7. отсутствуют UAT trust/secrets и debug package identity в release binaries;
+8. production DNS и public TLS issuance/renewal/expiry alerting подтверждены;
+9. snapshot→restore сохраняет XNode identity и пользовательский контур, а production rollback отрепетирован;
+10. source repositories чисты и release manifest воспроизводим.
 
 iOS/iPadOS и Mac Catalyst входят в отдельную Apple lane. До появления назначенной macOS build/signing authority и физического device evidence они явно `unverified` и `non-blocking` для выпуска Android/Windows RC и не могут рекламироваться как проверенно поддерживаемые.

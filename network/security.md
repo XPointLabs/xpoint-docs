@@ -11,10 +11,15 @@ icon: shield-halved
 | Прикладная криптография | идентичность отправителя, шифрование и целостность сообщений/файлов |
 | Mailbox protocol | credentials владельца, replay/ack, authority/revocation/topology generations |
 | XPoint route | подписанные privacy contacts, независимые RouterId/X25519, ровно три hops и непересекающийся fallback |
+| Anti-blocking carrier | аттестованный Xray/VLESS Reality path без немаскированного direct fallback |
 | HTTPS | доверенная CA-цепочка, hostname, срок действия и отзыв сертификата |
 | Локальное хранение | SQLCipher и platform SecureStorage |
 
 Один слой не отменяет другой. Валидный TLS-сертификат не делает неподписанный registry artifact доверенным; сквозное шифрование не разрешает игнорировать ошибку TLS.
+
+Three-hop onion privacy и traffic masking — разные свойства. Первая уже
+реализована; вторая не считается готовой, пока текущий MAUI message path
+открывает direct HTTPS к entry origin.
 
 ## Публичные HTTPS endpoints
 
@@ -38,3 +43,8 @@ Registry, file, push, staking и call signaling с публичными CA/Certb
 ## Границы централизации
 
 Эксплуатируемыми компонентами остаются public registry, file service, push bridge, staking API/portal, TURN, DNS, container registry, мониторинг и incident response. Узлы XPoint и on-chain staking распределены, однако эта распределённость не превращает operated services в несуществующие. Документация и UI должны называть их прямо.
+
+Direct P2P не должен неявно обращаться к этим official services. Будущий
+user-managed/on-prem профиль может использовать собственные Registry,
+signaling, TURN и file services, но только после явного consent-bound выбора
+другой authority и с обязательной TLS/SPKI проверкой.

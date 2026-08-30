@@ -8,9 +8,10 @@ icon: route
 
 | Режим | Ownership | Текущее состояние |
 | --- | --- | --- |
-| XPoint / privacy-routed authenticated MAU2 | `official-managed` | реализованный релизный профиль; новый physical UAT ещё обязателен |
-| authenticated MAU2 | `user-managed` | поддержан архитектурным контрактом; нет готового пользовательского release profile |
-| Direct P2P | `direct-p2p` | не готов: verified direct peer implementation отсутствует, запуск fail-closed |
+| XPoint three-hop MAU2 | `official-managed` | onion/privacy path реализован; physical UAT не закрыт |
+| XPoint masked carrier | `official-managed` | server/client Xray части есть, message path между ними не подключён |
+| authenticated MAU2 | `user-managed` | dormant architecture contract; runtime/on-prem позже |
+| Direct P2P | `direct-p2p` | обязательный до v1 режим; verified peer implementation отсутствует |
 
 Нельзя смешивать protocol и ownership. Direct P2P допустим только с `direct-p2p`; authenticated MAU2 — только с `official-managed` или `user-managed`. Неизвестные и несовместимые пары отклоняются при запуске.
 
@@ -24,11 +25,17 @@ icon: route
 
 Подписанный runtime связывает файл маршрутов по `privacyRoutesSha256`. Старые JSON/Session RPC, direct MAU2 HTTP и `/api/peer/onion` не поддерживаются. Файлы по-прежнему шифруются клиентом до загрузки в отдельный сервис.
 
+Сейчас первый opaque frame отправляется обычным HTTPS `HttpClient` на
+`entryOrigin`. Это защищает содержимое и маршрут, но не обеспечивает
+обход блокировки IP/домена ingress. Целевой v1 path отправляет тот же frame
+через аттестованный local/embedded Xray к VLESS/Reality ingress XNode и не
+переходит на direct HTTPS при ошибке.
+
 ## Direct P2P
 
-Целевой режим предназначен для прямого обмена между проверенными peers, включая локальные технологии Wi‑Fi и Bluetooth там, где платформа даёт безопасную реализацию. В коде есть platform discovery/radio scaffolding, но нет завершённого transport adapter, который удовлетворяет контрактам аутентификации, приватности метаданных, outbox и подтверждений.
+Целевой режим предназначен для прямого обмена между проверенными peers, включая локальные технологии Wi‑Fi и Bluetooth без Internet и Internet P2P там, где возможен direct NAT traversal. В коде есть platform discovery/radio scaffolding, но нет завершённого transport adapter, который удовлетворяет контрактам аутентификации, приватности метаданных, outbox и подтверждений.
 
-Поэтому Direct P2P нельзя включать подменой URL или обычным HTTP-сервисом. До завершения физической приёмки режим считается недоступным.
+Поэтому Direct P2P нельзя включать подменой URL или обычным HTTP-сервисом. Он остаётся недоступным сейчас, но является release blocker, а не post-release опцией. TURN relay и process-local signaling не должны называться Direct P2P.
 
 ## Страница «Транспорты»
 

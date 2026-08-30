@@ -46,6 +46,11 @@ chmod 600 ./secrets/key_ed25519 ./secrets/key_x25519 ./secrets/key_bls
 
 Compose публикует только `ingress:443`. Публичный message API содержит единственный `POST /api/ingress/v1/frame`; direct MAU2 и Session RPC отсутствуют. Внутренний `POST /api/peer/privacy/v1/frame`, остальные xnode API, Xray container port и storage не имеют host publisher. HAProxy разделяет точный HTTPS SNI и Reality SNI, удаляет входные `Forwarded` headers и пропускает только allowlisted routes. Quorum-signing endpoint ограничен coordinator `/32`.
 
+Это описывает node-side topology. Текущий MAUI mailbox client ещё не направляет
+frame через Reality/VLESS и использует direct HTTPS entry origin. До
+client-binding и physical anti-blocking gate развёрнутый узел нельзя считать
+доступным широкому кругу клиентов или готовым on-prem messenger profile.
+
 Каждый узел должен иметь подписанный privacy contact и authority остальных допустимых peers: RouterId, внутренний peer origin, независимый X25519 public key и exact capability `privacy-routing-v1`. Повторяющиеся identity/key, неизвестный peer, неверная подпись или неканонический endpoint останавливают маршрут fail-closed.
 
 ## Preflight и запуск
