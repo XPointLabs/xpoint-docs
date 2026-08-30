@@ -1,15 +1,21 @@
 # XPoint documentation agent rules
 
-The workspace rules in `../AGENTS.md` apply.
+When this repository is checked out as part of `deep-platform`, the workspace
+rules in `../AGENTS.md` also apply. In a standalone checkout, use the canonical
+[technical documentation ownership policy](https://github.com/XPointLabs/deep-platform/blob/main/docs/architecture/README.md)
+and the self-contained rules below.
 
 ## Owns
 
 - Published Russian documentation for Deep users, node operators and administrators.
 - `SUMMARY.md` navigation, release-readiness statements and static documentation assets.
-- Exact user-facing configuration, recovery, security and troubleshooting guidance.
+- User-facing configuration, recovery, security and troubleshooting workflows
+  derived from the canonical technical contracts; this repository does not own
+  their protocol semantics or security claims.
 
 Internal sprint notes, protocol drafts, secret paths/values and unverified product claims do not
-belong here. Link to public concepts; keep implementation backlog in `../docs/NEXT-SPRINT.md`.
+belong here. Link to public concepts; keep implementation backlog in the
+[master sprint](https://github.com/XPointLabs/deep-platform/blob/main/docs/NEXT-SPRINT.md).
 
 ## Repository rules
 
