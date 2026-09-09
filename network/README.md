@@ -6,7 +6,9 @@ icon: network-wired
 
 Deep не связывает модель переписки с одним сетевым провайдером. Прикладной слой формирует сквозно зашифрованные сообщения, а выбранный transport adapter отвечает за доставку, получение, подтверждение и повтор.
 
-Текущий кандидат использует `authenticated-mau2` с `official-managed` ownership и трёхузловым маршрутом через XPoint. Он включает:
+Целевой кандидат использует `authenticated-mau2` с `official-managed`
+ownership и трёхузловым маршрутом через XPoint. Отдельные реализованные срезы
+включают:
 
 - подписанные authority, revocation и topology artifacts;
 - выданные конкретному владельцу mailbox credentials;
@@ -21,11 +23,14 @@ Deep не связывает модель переписки с одним се�
 domain. Полностью непересекающийся primary/fallback будет заявлен только после
 появления не менее шести узлов с подтверждённым operator/host/ASN diversity.
 
-Это ещё не готовый anti-blocking release path. Клиент сейчас отправляет
-зашифрованный privacy frame напрямую на HTTPS ingress; серверный Xray/Reality
-и клиентский Reality runtime существуют, но не связаны с mailbox transport.
-До v1 этот frame должен идти через маскированный carrier без direct-HTTPS
-bypass. Direct P2P не входит в первый production-релиз: он перенесён в
+Это ещё не готовый end-to-end release path. Локальный first-release bootstrap
+и ONION state/roles подготовлены, но stack намеренно не запущен: Registry пока
+не выдаёт полный production authority package, необходимый узлам. Клиентский
+mailbox path также ещё не связан с Reality/VLESS carrier и не должен переходить
+на direct HTTPS при ошибке. Точный незавершённый scope находится в
+[master sprint](https://github.com/XPointLabs/deep-platform/blob/main/docs/NEXT-SPRINT.md).
+
+Direct P2P не входит в первый production-релиз: он перенесён в
 более поздний этап и должен поддерживать не только прямой peer link, но и
 multi-hop mesh. Production adapter пока отсутствует.
 

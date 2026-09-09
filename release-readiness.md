@@ -4,27 +4,29 @@ icon: list-check
 
 # Статус готовности к релизу
 
-Актуально на 30 августа 2026 года. Это точка отсчёта, а не GA-объявление. «Реализовано» означает наличие production-path кода и автоматических контрактов; «проверено физически» требует успешный run текущей commit matrix с сохранённым evidence.
+Актуально на 9 сентября 2026 года. Это не GA-объявление. «Реализовано» ниже
+означает наличие production-path кода и автоматических контрактов;
+«доступно пользователю» требует законченной release-композиции, а «проверено
+физически» — успешного прогона одной текущей RC commit matrix с сохранённым
+evidence. Полный незавершённый scope ведётся в
+[master sprint](https://github.com/XPointLabs/deep-platform/blob/main/docs/NEXT-SPRINT.md),
+а закрытые срезы — в
+[истории спринтов](https://github.com/XPointLabs/deep-platform/blob/main/docs/SPRINT-HISTORY.md).
 
 ## Клиент и транспорт
 
 | Возможность | Реализация | Физический UAT | Релизный вывод |
 | --- | --- | --- | --- |
-| Создание/восстановление identity | текущий 13-word path является legacy evidence; целевой 24-word/device-scoped generation специфицирован | нет evidence нового generation | clean-break blocker |
-| Ratcheted E2EE | текущий DPE1 не имеет PFS/PCS | нет | clean-break blocker |
-| Initial contact bootstrap | текущий PRA требует существующего E2EE channel | нет | architecture/implementation blocker |
-| XPoint three-hop privacy route | exact 3-hop реализован; initial topology не обещает disjoint fallback | текущий path не прогнан полностью | блокер physical evidence |
-| XPoint anti-blocking carrier | серверный Xray/Reality есть, но MAUI mailbox идёт direct HTTPS | нет | фундаментальный blocker до v1 |
-| Двусторонний текст | код/автотесты есть | актуальный phone run не прошёл; новый APK не установлен | не подтверждено |
-| Статус «Отправлено» | код/автотесты есть | прежний marker не доказывает текущую доставку | не подтверждено |
-| Произвольные контакты и группы | code path и GroupText harness есть | актуальный roundtrip/cold restart не пройден | блокер |
-| Выбор и отправка файла | есть | Android staging не завершён | блокер |
-| Изображения/превью | есть | ожидает продолжения payload matrix | блокер |
-| Голосовая запись/воспроизведение | есть | ожидает физического run | блокер |
-| Звонки WebRTC | client + registry code есть | end-to-end run не завершён | блокер: deployment/routing/TURN/UAT |
-| Push | есть | текущий physical cycle не закрыт | блокер evidence |
-| Restart/outbox durability | есть | фазы не завершены | блокер |
-| Before-forward fallback + outcome-unknown/ACK crash | opaque-ingress harness есть | chaos phases на новом path не завершены | блокер |
+| Локальный Deep account и постоянный Deep ID | offline-first account/store startup и canonical `deep1…` реализованы; сеть не требуется | итоговый airplane-mode create/restore gate не закрыт | локально работает, RC ещё не подтверждён |
+| Canonical contact import | `deep1…`/DIA1 принимаются; offline/unavailable сохраняется как pending, verified результат выдаётся только после проверки | UI/restart/QR matrix не закрыта | fail-closed; чат ещё не открывается |
+| Initial DPH2 и ratcheted DPE2 | protocol, protected stores, durable pending handshake и atomic commit реализованы | delivery/activation roundtrip отсутствует | не доступно пользователю до privacy-routed delivery receipt и runtime composition |
+| Двусторонний direct text/media | logical storage и отдельные срезы готовы | Android↔Windows RC отсутствует | не доступно пользователю |
+| Малые закрытые группы | GroupV1 authoring, local composer и privacy-routed GroupControl transport реализованы | invitation/fanout/acceptance/chat matrix отсутствует | не доступно пользователю до GroupControl/DPE2 композиции |
+| XPoint three-hop privacy route | XNode runtime и client control transport реализованы fail-closed; Contact и Group terminals обязательны для readiness, initial topology не обещает disjoint fallback | цельный client→stack run отсутствует | readiness остаётся `503 required-unavailable` до verified Contact/Group authority composition |
+| XPoint anti-blocking carrier | серверная и клиентская Reality/Xray основы есть | mailbox path при заблокированном direct HTTPS не пройден | блокер первого релиза |
+| Файлы, изображения и голос | UI/domain срезы существуют, но не подключены к готовому direct-message runtime | payload matrix отсутствует | не доступно в текущем RC |
+| Звонки WebRTC | отдельные client/server основы существуют | новый E2EE signaling/media-relay path не пройден | не доступно в текущем RC |
+| Push, restart/outbox и ACK-crash | отдельные persistence/harness срезы существуют | цельная RC matrix не закрыта | блокер evidence и композиции |
 | Direct P2P mesh | policy/interface и nearby scaffolding | verified peer/mesh adapter отсутствует | будущее архитектурное требование; не блокирует первый релиз |
 | User-managed/on-prem MAU2 | dormant SHR1/mode contract | runtime profile отсутствует | позднее; сохранять architecture seam |
 | iOS/iPadOS и Mac Catalyst | target frameworks есть | macOS signing/device evidence отсутствует | явно не проверено; не блокирует Android/Windows RC и не является release-supported |
@@ -35,6 +37,7 @@ icon: list-check
 | --- | --- |
 | Physical UAT TLS | частный CA, HTTPS ingress и app-scoped Android trust реализованы |
 | Публичный registry/file TLS | системная CA/hostname validation; статический leaf pin не требуется |
+| First-release XPoint stack | bootstrap, file-only identities/secrets, ONION state и exact node roles подготовлены; Contact/Group terminals явно обязательны | `Up/Verify` не запускались, контейнеры остановлены; readiness fail closed до verified Registry genesis/leaf, GSR1/DCR1 и authority-bound ContactResolve replay epoch |
 | Production node ingress | hardened Compose и current/next preflight contract реализованы; нужен deployment evidence |
 | Legacy Registry calls API | authenticated signaling/ICE code существует, но не входит в новый clean-break steady-state path |
 | Target call signaling | typed ratcheted events через XPoint message plane | не реализовано; blocker |
@@ -46,7 +49,8 @@ icon: list-check
 Релиз нельзя подписывать только по успешной сборке. Обязательны:
 
 1. MAU2 message frame проходит через реальный client Xray/VLESS Reality carrier при заблокированном direct HTTPS ingress;
-2. arbitrary contact, двусторонний text и group roundtrip проходят на текущей signed commit matrix;
+2. canonical contact import завершается verified activation, а двусторонний
+   direct text и group roundtrip проходят на текущей signed commit matrix;
 3. offline account creation, restart durability и retry/ACK crash phases подтверждены физически;
 4. production bootstrap/rotation переживает долгий offline без потери identity/history/outbox; retention истёкших сообщений проверяется отдельно и не обещается бессрочно;
 5. заявленные для v1 media/call функции имеют отдельное physical evidence;

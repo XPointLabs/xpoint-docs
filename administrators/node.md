@@ -4,7 +4,12 @@ icon: server
 
 # Развёртывание узла XPoint
 
-Production node compose находится в `deep-devops/docker-compose.node.prod.yml`. Это единственный поддерживаемый путь; отдельные вручную запущенные Xray, storage или xnode не образуют проверенную production topology.
+Production node compose находится в `deep-devops/docker-compose.node.prod.yml`.
+Это целевой поддерживаемый путь; отдельные вручную запущенные Xray, storage или
+xnode не образуют проверенную production topology. Public onboarding ещё не
+открыт, а локальный first-release stack пока не запускается без полной Registry
+authority closure, поэтому этот раздел не является объявлением deploy-ready
+версии.
 
 ## Базовые требования
 

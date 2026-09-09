@@ -31,7 +31,9 @@ belong here. Link to public concepts; keep implementation backlog in the
 
 ```powershell
 git diff --check
-npx honkit build
+npm ci --ignore-scripts
+npm run verify-render
+npm audit
 ```
 
 Also verify UTF-8, all relative links, `SUMMARY.md` coverage and rendered Russian text before commit.

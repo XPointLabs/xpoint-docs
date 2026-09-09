@@ -4,9 +4,9 @@
   "private": true,
   "description": "Deep and XPoint user and administrator documentation",
   "scripts": {
-    "build": "honkit build . _book",
-    "check": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/Test-Rc6DocumentationContracts.ps1",
-    "verify-render": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/Test-Rc6DocumentationContracts.ps1 -RenderedOutput"
+    "build": "node ./tools/build-docs.mjs",
+    "check": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/Test-XPointDocumentation.ps1",
+    "verify-render": "node ./tools/build-docs.mjs && powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/Test-XPointDocumentation.ps1 -RenderedOutput"
   },
   "engines": {
     "node": "24.13.0",
@@ -14,6 +14,6 @@
   },
   "packageManager": "npm@11.8.0",
   "devDependencies": {
-    "honkit": "6.2.2"
+    "marked": "18.0.11"
   }
 }

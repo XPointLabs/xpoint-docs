@@ -14,6 +14,13 @@ docker compose --env-file ./.env.node.prod -f ./docker-compose.node.prod.yml log
 
 Проверьте exact required env, secret file permissions, image availability, DNS и внутренние dependency health. Не удаляйте volume до снятия безопасной копии и определения владельца данных.
 
+Для нового first-release local profile `Config` уже проходит, но `Up/Verify`
+на текущей реализации ожидаемо останавливается до запуска контейнеров, если
+нет полного production Registry authority package. Это известный release
+blocker. Не подставляйте DEV/UAT authority и не отключайте preflight; актуальный
+состав незавершённой работы ведётся в
+[master sprint](https://github.com/XPointLabs/deep-platform/blob/main/docs/NEXT-SPRINT.md).
+
 ## Ingress не запускается
 
 Типовые причины: неверный SAN, cert/key mismatch, одинаковые current/next keys, неверный SPKI input, слишком широкий coordinator CIDR или stale preflight attestation. Исправьте material и заново создайте `ingress-preflight`; не обходите dependency condition.

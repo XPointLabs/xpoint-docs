@@ -4,7 +4,13 @@ icon: flask
 
 # Локальный физический UAT
 
-Поддерживаемый путь клиентской приёмки — survival/physical lane из `deep-devops`. Он сохраняет production-свойства: HTTPS, проверенный частный CA, трёхслойный privacy-routed authenticated MAU2, файловый сервис и signed mailbox artifacts. Шесть lab XNode позволяют дополнительно тестировать непересекающийся fallback, но первый трёхузловой production profile такого свойства не заявляет. Cleartext application transport и direct MAU2 endpoint не являются допустимым UAT-профилем. После clean break новый путь требует отдельного Android↔Windows evidence; результаты старого direct-path прогона его не подтверждают.
+Survival/physical lane из `deep-devops` остаётся полезным regression-стендом с
+HTTPS, частным UAT CA и прежними сервисными сценариями, но после clean break он
+не является evidence нового first-release path. Новый локальный bootstrap уже
+создаёт отдельные identity/state и проходит Compose `Config`, однако `Up/Verify`
+намеренно fail closed: Registry authority closure для полной production
+topology ещё не скомпонована. Обходить этот gate поддельным authority package
+нельзя.
 
 Этот lane пока доказывает direct HTTPS managed ingress, а не клиентский
 VLESS/Reality carrier. Для anti-blocking release gate нужен отдельный real-Xray
@@ -52,7 +58,11 @@ docker compose -p deep-survival-dev `
 
 USB допустим как канал управления ADB, но он не доказывает сетевой transport path. Для XPoint/Direct P2P evidence отдельно фиксируйте фактическую Wi‑Fi/Bluetooth технологию и route usage.
 
-## Фазы физической проверки
+## Целевая физическая матрица
+
+Следующие фазы станут исполняемым release gate после запуска first-release
+stack и завершения client composition. Сейчас `GroupText`, direct messaging и
+calls не могут считаться пройденными по старому survival path.
 
 Рекомендуемый порядок runner из `deep-client-maui/eng`:
 

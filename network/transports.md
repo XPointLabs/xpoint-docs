@@ -8,7 +8,7 @@ icon: route
 
 | Режим | Ownership | Текущее состояние |
 | --- | --- | --- |
-| XPoint three-hop MAU2 | `official-managed` | onion/privacy path реализован; physical UAT не закрыт |
+| XPoint three-hop MAU2 | `official-managed` | XNode/client срезы реализованы fail-closed; first-release stack не запущен без Registry authority closure, physical UAT не закрыт |
 | XPoint masked carrier | `official-managed` | server/client Xray части есть, message path между ними не подключён |
 | authenticated MAU2 | `user-managed` | dormant architecture contract; runtime/on-prem позже |
 | Direct P2P mesh | `direct-p2p` | будущее архитектурное требование; verified peer/mesh implementation отсутствует |
@@ -33,11 +33,14 @@ privacy hops.
 
 Подписанный runtime связывает файл маршрутов по `privacyRoutesSha256`. Старые JSON/Session RPC, direct MAU2 HTTP и `/api/peer/onion` не поддерживаются. Файлы по-прежнему шифруются клиентом до загрузки в отдельный сервис.
 
-Сейчас первый opaque frame отправляется обычным HTTPS `HttpClient` на
-`entryOrigin`. Это защищает содержимое и маршрут, но не обеспечивает
-обход блокировки IP/домена ingress. Целевой v1 path отправляет тот же frame
-через аттестованный local/embedded Xray к VLESS/Reality ingress XNode и не
-переходит на direct HTTPS при ошибке.
+Текущий first-release stack не запущен: его конфигурация и локальные XNode
+identity/ONION state подготовлены, но отсутствует полный production authority
+package от Registry. Отдельный существующий client slice может отправлять
+opaque frame обычным HTTPS на `entryOrigin`; это не считается готовым
+anti-blocking path. Целевой v1 отправляет frame через аттестованный
+local/embedded Xray к VLESS/Reality ingress XNode и не переходит на direct
+HTTPS при ошибке. Подробные authority и carrier gates принадлежат
+[технической документации master-репозитория](https://github.com/XPointLabs/deep-platform/blob/main/docs/architecture/README.md).
 
 ## Direct P2P
 
