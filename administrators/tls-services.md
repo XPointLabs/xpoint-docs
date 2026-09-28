@@ -24,7 +24,13 @@ curl --fail https://registry.example/health/live
 
 Текущий `docker-compose.node.prod.yml` отдельно требует current/next certificate и SPKI-файлы для networkless ingress attestation и подписанной ротации transport topology. Это ограниченный node-ingress контракт, а не универсальный pin для registry/file HTTPS и не callback клиентского leaf certificate validation.
 
-Доступны `deep-managed` и `operator-managed` profiles. В обоих случаях private keys и pin inputs лежат в protected files, current и next keys различаются, а смена поколения выполняется без перезаписи уже опубликованного signed generation.
+Доступны `pinned-self-issued`, `deep-managed` и `operator-managed` profiles.
+Для node ingress публичная CA и покупка домена не обязательны: locally issued
+certificate проверяется по точному SAN, сроку и current/next SPKI из подписанной
+сетевой authority. Это не trust-all TLS и не изменение системной CA-проверки
+Registry/file/push/staking. Во всех profiles private keys и pin inputs лежат
+в protected files, current и next keys различаются, а смена поколения выполняется
+без перезаписи уже опубликованного signed generation.
 
 ## Calls: текущий UAT и целевой release
 

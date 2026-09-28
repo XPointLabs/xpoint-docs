@@ -47,9 +47,28 @@ chmod 600 ./secrets/key_ed25519 ./secrets/key_x25519 ./secrets/key_bls
 
 Скопируйте только выведенные public/config values в `.env.node.prod`. Reality key pair создавайте штатным Xray той же pinned версии/образа, который будет запущен.
 
+Для DID2-кандидата используйте поддерживаемый `xpoint-node-installer` версии
+0.8.0: сначала подготовка с `--no-start`, затем регистрация и получение
+проверенного набора подписанных сетевых входов. Для существующего узла
+`--did2-runtime-dir DIR` выбирает такой набор только после проверки сохранённой
+identity, public trust anchors и certificate/key/pin bindings. Без него запуск
+блокируется; public onboarding пока не открыт.
+
+Выбранные входы сохраняются в отдельной неизменяемой версии. Зарегистрированные
+Ed25519/BLS ключи, Reality credentials и существующий volume состояния узла
+не заменяются. Диагностическое состояние не переносится в volume, а несовместимое
+защищённое состояние не удаляется для обхода ошибки. Повторный запуск сохраняет
+выбор, штатный rollback восстанавливает прежнюю конфигурацию.
+
+Текущий набор выбирает диагностический software profile `UAT`, но seed-машины
+являются production, а не отдельным UAT-стендом. Это разрешённое владельцем
+pre-release тестирование, не подтверждение готовности для пользователей.
+Полный цикл сообщений, вложений и групп должен быть проверен физически на
+Windows и Android до публикации релиза.
+
 ## Сетевой контур
 
-Compose публикует только `ingress:443`. Публичный message API содержит единственный `POST /api/ingress/v1/frame`; direct MAU2 и Session RPC отсутствуют. Внутренний `POST /api/peer/privacy/v1/frame`, остальные xnode API, Xray container port и storage не имеют host publisher. HAProxy разделяет точный HTTPS SNI и Reality SNI, удаляет входные `Forwarded` headers и пропускает только allowlisted routes. Quorum-signing endpoint ограничен coordinator `/32`.
+Compose публикует только `ingress:443`. Публичный message API содержит единственный `POST /api/ingress/v1/frame`; direct MAU2 и Session RPC отсутствуют. Аутентифицированные privacy-peer и DID2 replica операции доступны через allowlist HTTPS ingress; выделенные HTTP2 backend-порты, остальные xnode API, Xray container port и storage не имеют host publisher. HAProxy разделяет точный HTTPS SNI и Reality SNI, удаляет входные `Forwarded` headers и пропускает только allowlisted routes. Quorum-signing endpoint ограничен coordinator `/32`.
 
 Это описывает node-side topology. Текущий MAUI mailbox client ещё не направляет
 frame через Reality/VLESS и использует direct HTTPS entry origin. До
