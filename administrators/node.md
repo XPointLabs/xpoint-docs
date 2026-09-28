@@ -56,6 +56,9 @@ identity, public trust anchors и certificate/key/pin bindings. Без него 
 или используют официальный Node.js 24 Docker image, закреплённый digest.
 Контейнер проверки работает без сети с ограниченными mounts; системный Node.js
 и package repositories не заменяются. Первый pull требует доступа к registry.
+Активирующий запуск installer пересоздаёт service containers, чтобы изменения
+смонтированных scripts/templates вступили в силу даже при прежнем image digest.
+Volumes и ключи сохраняются; планируйте окно перезапуска.
 
 Выбранные входы сохраняются в отдельной неизменяемой версии. Зарегистрированные
 Ed25519/BLS ключи, Reality credentials и существующий volume состояния узла
