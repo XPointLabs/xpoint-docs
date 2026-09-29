@@ -38,6 +38,16 @@ identity. Повреждение state, fork или несовпадение у�
 Технические причины и обязательные fault cases находятся в
 [recovery runbook](https://github.com/XPointLabs/deep-devops/blob/main/docs/NETWORK_STABILITY_RECOVERY.md).
 
+В текущем локальном candidate доверенное время получается автоматически от
+аутентифицированных источников, а пропущенная история каталога догоняется
+порциями с независимой проверкой подписей. Это не повод удалять локальный
+floor или переносить DEV trust в production. Для разработки используйте
+[единый deep-dev стенд](https://github.com/XPointLabs/deep-devops/blob/main/docs/DEEP_DEV.md);
+его проверка требует текущего Registry proof и verified ONION-ready всех трёх
+нод. Обычный `healthy` в Development сам по себе этого не подтверждает.
+Короткие stop/start и >64-head catch-up проверены, но длительный soak,
+неограниченная ротация ключей и доставка сообщений на устройствах ещё не закрыты.
+
 ## Ingress не запускается
 
 Типовые причины: неверный SAN, cert/key mismatch, одинаковые current/next keys, неверный SPKI input, слишком широкий coordinator CIDR или stale preflight attestation. Исправьте material и заново создайте `ingress-preflight`; не обходите dependency condition.
