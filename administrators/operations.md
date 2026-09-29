@@ -15,6 +15,18 @@ docker compose --env-file ./.env.node.prod -f ./docker-compose.node.prod.yml log
 
 Контролируйте readiness из внутренней сети/контейнера, heartbeat age, registry projection, route success/error rate, storage bytes/messages, disk usage, restart count, TLS expiry и очереди push/calls. Публичные `/status`, `/metrics` и admin endpoints у node ingress должны оставаться закрыты.
 
+## Остановка и повторный запуск
+
+`restart: unless-stopped` не отменяет явную остановку оператором. После
+`docker compose stop xnode` выполните штатный `start xnode`, когда узел снова
+нужен. Сохраняйте named volumes, зарегистрированные ключи и DID2 protection
+keys/key ring вместе с protected floor/anchor. Не используйте `down --volumes`,
+volume prune или генерацию новой identity как способ восстановить связь.
+При трёх обязательных узлах отсутствие одного временно блокирует полный
+трёхузловой маршрут; успешный restart одного процесса не доказывает доставку.
+После возвращения зависимостей проверяйте readiness и разрешённый canary,
+а не только состояние контейнера.
+
 ## Обновление
 
 1. зафиксируйте текущие image digests и backup IDs;

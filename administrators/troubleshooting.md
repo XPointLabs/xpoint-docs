@@ -21,6 +21,23 @@ blocker. Не подставляйте DEV/UAT authority и не отключа�
 состав незавершённой работы ведётся в
 [master sprint](https://github.com/XPointLabs/deep-platform/blob/main/docs/NEXT-SPRINT.md).
 
+## Контейнер запущен, но узел unready
+
+Liveness и readiness проверяют разное: работающий процесс ещё не означает,
+что у него есть свежая проверенная сетевая authority. В обновлённом DID2
+runtime временный отказ Registry, timeout или истёкшее доказательство оставляет
+узел unready; фоновый цикл повторяет получение свежего состояния, учитывая
+ограниченный `Retry-After` при 429/503. Health-проверка не расходует клиентский
+nonce. Это локально проверенное поведение candidate, а не подтверждение
+длительного production recovery или завершённого device E2E.
+
+Проверьте зависимости, актуальность подписанного view и доверенного времени.
+Не продлевайте expiry вручную, не удаляйте anti-rollback state и не заменяйте
+identity. Повреждение state, fork или несовпадение установленного ключа —
+отдельная ошибка, которую повтор сетевого запроса не исправляет.
+Технические причины и обязательные fault cases находятся в
+[recovery runbook](https://github.com/XPointLabs/deep-devops/blob/main/docs/NETWORK_STABILITY_RECOVERY.md).
+
 ## Ingress не запускается
 
 Типовые причины: неверный SAN, cert/key mismatch, одинаковые current/next keys, неверный SPKI input, слишком широкий coordinator CIDR или stale preflight attestation. Исправьте material и заново создайте `ingress-preflight`; не обходите dependency condition.
